@@ -1,0 +1,75 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+  <div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+            <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a>推荐位内容管理</a></li>
+            <li>推荐位内容</li>
+        </ol>
+    </div>
+  </div>
+    <div class="row" style="margin-left:40px">
+    <form action="/server/editreposHandler/" method="post" enctype="multipart/form-data" id="pcform">
+{% csrf_token %}
+    <div class="input-group" style="width: 30%;margin-top: 50px">
+            <input type="hidden" name="newsid" value={{ newsid }}>
+          <select class="form-control"  id="pushposition"  name="position">
+                {% for item in positionlist %}
+                      <option
+                              {% if positionname == item.name %}
+                              selected
+                              {% endif %}
+                              value={{ item.id }}>{{ item.name }}</option>
+                      {% empty %}
+                        <option  disabled>无颜色</option>
+                {% endfor %}
+          </select>
+    </div>
+    <button class="glyphicon glyphicon-arrow-up btn-default btn" style="margin-top: 20px" type="submit">推送</button>
+</form>
+    </div>
+
+{#    模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">删除信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="body"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}
+<script>
+    init()
+    function init(){
+        var validate=$("#pcform").validate({
+        submitHandler:function(form){
+            $("#pcform").ajaxSubmit(function(message){
+                var getData=JSON.parse(message)
+                    if(getData["code"]==0){
+                        var text=getData["msg"]
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                        $("#correct").click(correct)
+                    }else{
+                        var text=getData["msg"]
+                        $("#success").html(text)
+                    }
+                    console.log(getData)
+            })
+        }
+     } )
+    }
+    function correct(){
+         location.href="/server/positionList/"
+    }
+</script>

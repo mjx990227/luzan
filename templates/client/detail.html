@@ -1,0 +1,23 @@
+{% extends "client/common/nav.html" %}
+{% block change %}
+    {% for item in deatilNews %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+            <div class="blog-header">
+                <h1 class="blog-title">{{ item.title }}</h1>
+                <p class="lead blog-description">{{ item.contentTime }}</p>
+              </div>
+            <div class="blog-body">
+{#                {{ item.content }}#}
+            </div>
+        </div>
+    </div>
+
+<script>
+    var tbody=$(".blog-body")
+    {#tbody.innerHTML='{{ item.content }}'#}
+    tbody.html('{{ item.content | safe }}')
+</script>
+{% endfor %}
+{% endblock %}

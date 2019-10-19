@@ -1,0 +1,63 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+  <div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+            <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a>基本设置</a></li>
+            <li>清除缓存</li>
+        </ol>
+    </div>
+  </div>
+{#    <form action="/server/clearAll/" method="post" id="clear">#}
+{#    {% csrf_token %}#}
+        <div class="row" style="margin-top: 20px">
+            <div class="col-xs-2">
+              <button class="btn btn-primary" style="margin-left: 30px" id="clear">清除缓存</button>
+             </div>
+        </div>
+{#    </form>#}
+
+
+{#    模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">删除信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="body"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+    <script>
+    var clearBtn=$("#clear")
+    clearBtn.click(clear)
+    function clear(){
+        console.log("清除缓存")
+        $('#myModal').modal('show')
+        $("#body").html("确定清除缓存吗？")
+        $("#correct").click(correct)
+    }
+    function correct(){
+        $.ajax({
+                url:"/server/clearAll/",
+                type:"get",
+                data:{
+                    aid:"清除缓存"
+                },
+                dataType:"json",
+                success:function(data){
+                    console.log(data["msg"])
+                    alert(data["msg"])
+                }
+            })
+    }
+</script>
+{% endblock %}

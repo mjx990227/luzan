@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>路赞后台管理系统</title>
+      <style>
+          {#整个背景颜色#}
+          .keynote{
+              background-color: #3A3E4A;
+          }
+          .white{
+              color:white
+          }
+          {#用户管理间距#}
+          .space{
+              padding: 5px;
+          }
+      </style>
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/docs/examples/blog/blog.css" rel="stylesheet">
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="/static/libs/jquery.js"></script>
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/libs/jquery.validate.js"></script>
+    <script src="/static/libs/jquery.form.js"></script>
+  </head>
+
+  <body>
+{#  title部分#}
+    <nav class="navbar" style="margin:0" id="headernav">
+      <div class="container-fluid keynote">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand"><h4 style="padding-left: 50px;" class="white">路赞后台管理系统</h4></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                <ul class="nav navbar-nav navbar-right" style="margin: auto;padding-top: 12px">
+                  <li class="space"><button class="glyphicon glyphicon-user white btn-primary btn">{{ username }}</button></li>
+                  <li class="space"><button  class="glyphicon glyphicon-log-out white btn-danger btn" id="quit"></button></li>
+              </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="row" style="margin:0">{#    侧面导航部分#}
+      <div class="col-md-2 keynote list-group leftnav" id="leftnav">
+          <ul class="nav nav-sidebar">
+            <li><a href="/server/index/"><span class="glyphicon glyphicon-home" aria-hidden="true" id="index">&nbsp;首页</span></a></li>
+            <li><a href="/server/menuList/"><span class="glyphicon glyphicon-th-list" aria-hidden="true" id="menu">&nbsp;菜单管理</span></a></li>
+            <li><a href='/server/articleList?page=1'><span class="glyphicon glyphicon-book" aria-hidden="true" id="article">&nbsp;文章管理</span></a></li>
+            <li><a href="/server/userList/"><span class="glyphicon glyphicon-user" aria-hidden="true" id="user">&nbsp;用户管理</span></a></li>
+            <li><a href="/server/positionList/"><span class="glyphicon glyphicon-bookmark" aria-hidden="true" id="position">&nbsp;推荐位管理</span></a></li>
+            <li><a href="/server/positionContent/"><span class="glyphicon glyphicon-bookmark" aria-hidden="true" id="positionContent">&nbsp;推荐位内容管理</span></a></li>
+            <li><a href="/server/basic/"><span class="glyphicon glyphicon-cog" aria-hidden="true" id="basic">&nbsp;基本管理</span></a></li>
+          </ul>
+
+      </div>
+      <div class="col-md-10">
+          {% block right %}
+          {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>
+<script>
+    var heardernavheight;
+    var windowheight;
+    var diffheight;
+
+    init();
+    function init(){
+        heardernavheight=$("#headernav").height();
+        windowheight=$(document).height();
+        diffheight =windowheight-heardernavheight;
+        $(".leftnav").height(diffheight);
+        $("#quit").click(out)
+        var _url=location.href;
+        $(".leftnav a").removeClass("list-group-item");
+        $(".leftnav a").each(function(){
+            var _href=$(this).attr("href")
+            if (_url.indexOf(_href)>-1){
+                $(this).addClass("list-group-item")
+            }
+        });
+        function out(){
+            location.href="/server/quit/"
+        }
+    }
+</script>

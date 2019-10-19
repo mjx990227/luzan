@@ -1,0 +1,170 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+    <style>
+    #thumb{
+        background-image: url("/static/img/timg.jpg");
+    }
+    </style>
+<div class="row">
+    <div class="col-xs-12">
+         <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+             <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a href="#">文章管理</a></li>
+             <li>添加文章</li>
+        </ol>
+    </div>
+    </div>
+    <div class="row container" style="margin: 35px 0 0 10%">
+        <form class="form-horizontal" action="/server/editHandler/" enctype="multipart/form-data" method="POST" id="articleform">
+        {% csrf_token %}
+          {% for item in article %}
+              <div class="form-group" style="display: none">
+            <label for="inputEmail3" class="col-sm-2 control-label">文章id</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="title" value="{{ item.id }}" name="aid">
+            </div>
+          </div>
+              <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="title" value="{{ item.title }}" name="title">
+            </div>
+          </div>
+            <div class="form-group" id="head">
+            <label for="inputPassword3" class="col-sm-2 control-label">缩略图</label>
+            <div class="col-sm-10"  id="headimg">
+                {% if item.thumb %}
+                <input type="hidden" id="file" value="{{ item.thumb }}" name="preImg" style="opacity: 0;width: 70px;height: 70px ;border:1px solid black">
+                    <img src="/static/uploads/img/{{ item.thumb }}" class="preview" style="position: absolute;width: 70px;height: 70px">
+                    {% else %}
+                    <img src="/static/img/timg.jpg" class="preview" style="position: absolute;width: 70px;height: 70px">
+                {% endif %}
+                <input type="file" id="file" placeholder="选择文件" name="headimg" style="opacity: 0;width: 70px;height: 70px ;border:1px solid black">
+
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">标题颜色</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="color" name="color">
+                  {% for item1 in colorList %}
+                      <option  {% if item.title_font_color == item1.color  %}selected  {% endif %} value="{{ item1.color }}">{{ item1.colortext }}</option>
+                  {% endfor %}
+                </select>
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">所属栏目</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="column" name="column">
+                  {% for item2 in menuList %}
+                  <option  {% if item.catid == item2.id  %}selected  {% endif %} value="{{ item2.id }}">{{ item2.name }}</option>
+                  {% endfor %}
+                </select>
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">阅读数量</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="num" placeholder="0"  name="num" disabled>
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">内容</label>
+            <div class="col-sm-10">
+                {{ form.media }}
+                {{ form }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">提交</button>
+              <button type="submit" class="btn btn-default">重填</button>
+            </div>
+          </div>
+            {% endfor %}
+        </form>
+{#模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="success"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <script>
+     init()
+    function init(){
+         document.getElementById("id_content").value='{{ contentDetail |safe }}'
+         console.log("{{ contentDetail }}")
+        var validate=$("#articleform").validate({
+        submitHandler:function(form){
+            $("#articleform").ajaxSubmit(function(message){
+                var getData=JSON.parse(message)
+                {#var getData=message#}
+                console.log(typeof(message))
+                    if(getData["code"]==0){
+                        var text=getData["msg"]
+                        console.log(text)
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                        $("#correct").click(correct)
+                     }else{
+                        var text=getData["msg"]
+                        console.log(text)
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                     }
+            })
+        }
+     } )
+        $("input[name='headimg']").change(function(){
+            road=$("#file").val().split(".")[$("#file").val().split(".").length-1]
+            console.log(road)
+            list=["jpg","jpeg","png"]
+            console.log(list.indexOf(road))
+            if(list.indexOf(road) != -1){
+                    console.log("是图片文件")
+                    var imgFile=this.files.item(0);
+                    var _url=window.URL.createObjectURL(imgFile);
+                    $(".preview").attr("src",_url);
+                    return
+            }
+            $('#myModal').modal('show')
+            $("#success").html("不是图片文件")
+            $(".preview").attr("src","/static/images/timg1.jpg");
+            {#for(var i=0;i<list.length;i++){#}
+            {#    if (road==list[i]) {#}
+            {#        console.log("是图片文件")#}
+            {#        var imgFile=this.files.item(0);#}
+            {#        var _url=window.URL.createObjectURL(imgFile);#}
+            {#        $(".preview").attr("src",_url);#}
+            {#        return#}
+            {#    }#}
+            {#    $('#myModal').modal('show')#}
+            {#    $("#success").html("不是图片文件")#}
+            {#    console.log("不是图片文件")#}
+                {#var imgFile=this.files.item(0);#}
+                {#var _url=window.URL.createObjectURL(imgFile);#}
+            {#    $(".preview").attr("src","/static/images/timg1.jpg");#}
+            {# }#}
+
+
+        })
+
+    }
+    function correct(){
+         location.href="/server/articleList?page=1"
+    }
+</script>
+    </div>
+{% endblock %}

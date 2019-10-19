@@ -1,0 +1,109 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+    <div class="row">
+        <div class="col-xs-12">
+            <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+                <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a href="#">用户管理</a></li>
+                <li>用户列表</li>
+            </ol>
+        </div>
+
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-xs-2">
+              <button class="btn btn-primary" style="margin-left: 30px" id="addArticle">添加新用户</button>
+         </div>
+    </div>
+
+        <div class="row"  style="margin: 25px 0 0 30px">
+            <table class="table table-bordered">
+              <tr>
+                  <th class="text-center">id</th>
+                  <th class="text-center">用户名</th>
+                  <th class="text-center">密码</th>
+                  <th class="text-center">电子邮件</th>
+                  <th class="text-center">注册时间</th>
+                  <th class="text-center">头像</th>
+                  <th class="text-center">简介</th>
+                  <th class="text-center">操作</th>
+              </tr>
+                  {% for item in userList %}
+                      <tr>
+                      <td class="text-center">{{ item.id }}</td>
+                     <td class="text-center">{{ item.username }}</td>
+                     <td class="text-center">{{ item.password }}</td>
+                     <td class="heading text-center">{{ item.email }}</td>
+                      <td class="text-center">{{ item.lasttime }}</td>
+                      <th class="text-center">
+                          {% if item.thumb %}
+                          <img class="img" src="/static/uploads/img/{{ item.img }}" width="100px" height="70px">
+                          {% else %}
+                          <img class="img" src="/static/img/timg1.jpg" width="100px" height="70px">
+                          {% endif %}
+                      </th>
+                      <td class="text-center userInfo"></td>
+                     <td class="text-center">
+                         <button class="btn btn-default glyphicon glyphicon-edit btn-primary edit" index="{{ item.id }}"></button>
+                         <button class="btn btn-default glyphicon glyphicon-trash btn-danger delete" index="{{ item.id }}"></button>
+                     </td>
+                  </tr>
+                      <script> var userInfo=$(".userInfo")
+        userInfo.html('{{ item.userInfo | safe }}')</script>
+                {% endfor %}
+            </table>
+        </div>
+        {#模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="success"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <script>
+    $("#addArticle").click(add)
+    $(".edit").click(edit)
+    $(".delete").click(_delete)
+        function add(){
+                location.href="/server/addUser/"
+        }
+        function edit(){
+            uid=this.getAttribute("index")
+            console.log(uid)
+            location.href="/server/editUser?uid="+uid
+        }
+        function _delete(){
+            uid=this.getAttribute("index")
+            $('#myModal').modal('show')
+            $("#success").html("确认删除？")
+            $("#correct").click(correct)
+            console.log(uid)
+        }
+        function correct(){
+            $.ajax({
+                url:"/server/deleteUser",
+                type:"get",
+                data:{
+                    uid:uid
+                },
+                dataType:"json",
+                success:function(data){
+                    console.log(data["msg"])
+                    $("#success").html(data["msg"])
+                    location.href="/server/userList/"
+                }
+            })
+        }
+    </script>
+{% endblock %}
+

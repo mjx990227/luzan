@@ -1,0 +1,42 @@
+{% extends "client/common/nav.html" %}
+{% block change %}
+    {% for item in newsList %}
+                       <div class="row" style="margin:5px;border: 1px solid grey;">
+                           <div class="col-md-4" style="margin-top: 10px">
+                            <img src="/static/uploads/img/{{ item.thumb }}" width="320px" height="200px" >
+                        </div>
+                        <div class="col-md-7" style="padding-left:30px;padding-top:10px;">
+                            <h3><a href="/client/detail?newsId={{ item.id }}">{{ item.title }}</a></h3>
+                            <h4>文章细节</h4>
+                            <div style="padding-top: 100px;">
+                                <div class="col-md-5"><p>{{ item.title }}</p></div>
+                                <div class="col-md-5"><p>{{ item.contentTime }}</p></div>
+                                <div class="col-md-2"><p>{{ item.num }}</p></div>
+                            </div>
+                        </div>
+                       </div>
+                        {% endfor %}
+    <div class="row" style="margin-left: 40%">
+        <nav aria-label="Page navigation">
+			  <ul class="pagination">
+			  {% if page != 1 %}
+				<li>
+				  <a href="/client/column?catid={{ columnId }}&page={{ page |add:-1 }}" aria-label="Previous">
+					<span aria-hidden="true">«</span>
+				  </a>
+				</li>
+			  {% endif %}
+				  {% for item in allPageList %}
+					  <li{% if page == item %} class="active"{% endif %}><a href="/client/column?catid={{ columnId }}&page={{ item}}">{{ item }}</a></li>
+				  {% endfor %}
+              	{% if page < pages %}
+				<li>
+				  <a href="/client/column?catid={{ columnId }}&page={{ page |add:1 }}" aria-label="Next">
+					<span aria-hidden="true">»</span>
+				  </a>
+				</li>
+			  {% endif %}
+			  </ul>
+        </nav>
+    </div>
+{% endblock %}

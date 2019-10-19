@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>路赞新闻</title>
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/static/libs/bootstrap/bootstrap-3.3.7/docs/examples/blog/blog.css" rel="stylesheet">
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="/static/libs/jquery.js"></script>
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+    <script src="/static/libs/bootstrap/bootstrap-3.3.7/docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/libs/jquery.validate.js"></script>
+    <script src="/static/libs/jquery.form.js"></script>
+      <style>
+          *{border:0;padding:0;margin:0;list-style: none}
+      </style>
+  </head>
+
+  <body>
+    {#  title部分#}
+    <nav class="navbar navbar-inverse" style="">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">路赞新闻网站</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a id="-1" href="/client/index/" class="list-group-item">首页</a></li>
+              {% for item in type_list %}
+            <li><a id="{{ item.id }}" href="/client/column?catid={{ item.id }}&page=1">{{ item.name }}</a></li>
+              {% endfor %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+{#中间部分#}
+    <div class="row" style="margin-bottom: 50px;">
+        <div class="col-md-8">
+            {% block change %}
+                <div class="row" style="margin-left: 20px">
+                    <div class="col-md-8">
+{#                    轮播图片#}
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="width:690px">
+                          <ol class="carousel-indicators">
+                            {% for item in newsList %}
+                                <li data-target="#carousel-example-generic" data-slide-to="{{ forloop.counter }}" {% if forloop.counter == 0 %}class="active"{% endif %}></li>
+                              {% endfor %}
+                          </ol>
+                          <div class="carousel-inner" role="listbox">
+                            {% for item in newsList %}
+                                <div class="item carousel {% if forloop.counter == 1 %}active{% endif %}">
+                                  {% if item.thumb %}
+                                    <img class="carouselImg" index="{{ item.id }}"  data-src="holder.js/900x500/auto/#666:#444/text:Second slide" alt="Second slide [900x500]" src="/static/uploads/img/{{ item.thumb }}" data-holder-rendered="true">
+                                {% else %}
+                                <img class="carouselImg" index="{{ item.id }}"  data-src="holder.js/900x500/auto/#666:#444/text:Second slide" alt="Second slide [900x500]" src="/static/img/timg1.jpg" data-holder-rendered="true">
+                                {% endif %}
+                                </div>
+                              {% endfor %}
+                          </div>
+                          <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                          <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3" style="margin-left: 40px">
+                        <ul>
+                          {% for item in newsList1 %}
+                              <a href="/client/detail?newsId={{ item.id }}"><li style="margin-bottom:8px;border:1px solid silver;padding:2px;text-align: center "><img src="/static/uploads/img/{{ item.thumb }}"  width="210px" height="120px"></li></a>
+                          {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="padding:5px;padding-left:20px;margin:auto">
+                        {% for item in newsList2 %}
+                       <div class="row" style="margin:5px;border: 1px solid grey;">
+                           <div class="col-md-4" style="margin-top: 10px">
+                            <img src="/static/uploads/img/{{ item.thumb }}" width="320px" height="200px" >
+                        </div>
+                        <div class="col-md-7" style="padding-left:30px;padding-top:10px;">
+                            <h3><a href="/client/detail?newsId={{ item.id }}">{{ item.title }}</a></h3>
+                            <h4>文章细节</h4>
+                            <div style="padding-top: 100px;">
+                                <div class="col-md-5"><p>{{ item.title }}</p></div>
+                                <div class="col-md-5"><p>{{ item.contentTime }}</p></div>
+                                <div class="col-md-2"><p>{{ item.num }}</p></div>
+                            </div>
+                        </div>
+                       </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+        <div class="col-md-4">
+            <div class="bs-example" data-example-id="condensed-table">
+            <table class="table table-condensed">
+              <thead>
+                <p class="text-center lead" style="margin-bottom: 0px;font-size: 32px;font-family: 'Adobe 仿宋 Std R'">文章排行</p>
+                <h5 class="text-center" style="margin-top: 0px; color: grey">TOP ARTICLE</h5>
+              </thead>
+            <tbody>
+                    <tr>
+                      <th scope="row">
+                          <h2 style="background-color: red;color: white;width: 20px;text-align: center">1</h2>
+                      </th>
+                      <td>
+                          <h3><a href="/client/detail?newsId={{ newsList2.0.id }}">{{ newsList2.0.title }}</a></h3>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                          <h3 style="color: red;">2</h3>
+                      </th>
+                      <td>
+                          <h4><a href="/client/detail?newsId={{ newsList2.1.id }}">{{ newsList2.1.title }}</a></h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                          <h3 style="color: red;">3</h3>
+                      </th>
+                      <td>
+                          <h4><a href="/client/detail?newsId={{ newsList2.2.id }}">{{ newsList2.2.title }}</a></h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                          <h4 style="color: grey;">4</h4>
+                      </th>
+                      <td>
+                          <h5><a href="/client/detail?newsId={{ newsList2.3.id }}">{{ newsList2.3.title }}</a></h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                          <h4 style="color: grey;">5</h4>
+                      </th>
+                      <td>
+                          <h5><a href="/client/detail?newsId={{ newsList2.4.id }}">{{ newsList2.4.title }}</a></h5>
+                      </td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+            <ul>
+              {% for item in newsList1 %}
+                  <a href="/client/detail?newsId={{ item.id }}"><li style="margin-bottom:8px;padding:2px;text-align: center "><img src="/static/uploads/img/{{ item.thumb }}" width="370px" height="200px"></li></a>
+              {% endfor %}
+          </ul>
+        </div>
+
+
+    </div>
+
+
+    <nav class="navbar navbar-inverse navbar-fixed-bottom">
+      <div class="container text-center" style="color:lightgoldenrodyellow;">
+        Copyright。2017 Luzan.com Inc. All Rights Reserved.路赞杂志社版权所有
+      </div>
+    </nav>
+  </body>
+</html>
+<script>
+    $(".carouselImg").each(function(){
+        console.log($(this).attr("src"))
+    })
+    $(".carouselImg").click(function(){
+        var newsId=$(this).attr("index")
+        location.href="/client/detail?newsId="+newsId
+    })
+    init()
+    function init(){
+        var _url=location.href;
+        $(".navbar-nav a").removeClass("list-group-item");
+        $(".navbar-nav a").each(function(){
+            var _href=$(this).attr("href")
+            console.log(_url.indexOf(_href))
+            if (_url.indexOf(_href)>-1){
+                $(this).addClass("list-group-item")
+            }
+        });
+    }
+</script>

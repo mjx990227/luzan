@@ -1,0 +1,111 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+  <div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+            <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a>推荐位内容管理</a></li>
+            <li>推荐位内容</li>
+        </ol>
+    </div>
+  </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-xs-2">
+          <button class="btn btn-primary" style="margin-left: 30px" onclick="positionManage()">添加推荐位</button>
+         </div>
+        <div class="row "  style="margin: 25px 0 0 30px;">
+            <table class="table table-hover">
+              <tr>
+                  <th class="text-center">id</th>
+                  <th class="text-center">推荐位名</th>
+                  <th class="text-center">推荐文章名</th>
+                  <th class="text-center">操作</th>
+              </tr>
+                {% for item in positionContentList %}
+                    <tr>
+                      <th class="text-center">{{ item.id }}</th>
+                      <th class="text-center">{{ item.name }}</th>
+                        <th class="text-center">{{ item.title }}</th>
+                      <th class="text-center" >
+                          <p class="btn btn-primary edit" index="{{ item.id }}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></p>
+                          <p class="btn btn-danger delete" index="{{ item.id }}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></p>
+                      </th>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{#    模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">删除信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="body"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+    <script>
+    var currentObj={id:"",code:""}
+        var positionid
+        var editBtn
+        var deleteBtn
+        init()
+        function init(){
+            editBtn=$(".edit")
+            deleteBtn=$(".delete")
+            editBtn.click(edit)
+            deleteBtn.click(_delete)
+            $('#myModal').on('hidden.bs.modal', function (e) {
+             if (currentObj["code"]==0){
+                console.log("成功")
+                var _id=currentObj["id"]
+                    $("p[index='"+_id+"']").parents("tr").remove()
+                }
+            })
+        }
+        function edit(){
+            positionid=this.getAttribute("index")
+            location.href="/server/articleList/"
+        }
+        function _delete(){
+            positionid=this.getAttribute("index")
+            currentObj["id"]=positionid
+            $.ajax({
+                url:"/server/delPositionContentHandle/",
+                type:"get",
+                data:{
+                    positionid:positionid
+                },
+                dataType:"json",
+                success:function(data){
+                    currentObj["code"]=data["code"]
+                    if(currentObj["code"]==0){
+                        $('#myModal').modal('show')
+                        $("#body").html(data["msg"])
+                        $("#correct").click(list)
+                    }else{
+                        $('#myModal').modal('show')
+                        $("#body").html(data["msg"])
+                    }
+                }
+            })
+            console.log(menuid)
+        }
+        function list(){
+            location.href='/server/positionList/'
+        }
+        function positionManage(){
+        console.log("添加菜单")
+        location.href='/server/positionManage/'
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+   <div class="row">
+        <div class="col-xs-12">
+            <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+                <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a>推荐位管理</a></li>
+                <li id="list">推荐位列表</li>
+            </ol>
+        </div>
+    </div>
+   <div class="row container" style="margin: 35px 0 0 10%">
+        <form  class="form-horizontal" style="width: 70%" action="/server/editPositionHandler/" method="post" id="editPositionform">
+            {% csrf_token %}
+            <div class="form-group"  style="display: none">
+                    <label for="inputEmail3" class="col-sm-2 control-label">ss</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="positionId" id="positionId">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label" >菜单名</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="positiontitle" placeholder="{{ name }}" name="positiontitle" value="{{ name }}">
+                </div>
+              </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary">提交</button>
+              <button type="button" class="btn btn-default" id="refill">重填</button>
+            </div>
+          </div>
+        </form>
+    </div>
+{#模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="success"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+    init()
+    function init(){
+        var id=location.href.split("=")[1]
+        $("#positionId").val(id)
+        var validate=$("#editPositionform").validate({
+        submitHandler:function(form){
+            $("#editPositionform").ajaxSubmit(function(message){
+                var getData=JSON.parse(message)
+                    if(getData["code"]==0){
+                        var text=getData["msg"]
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                        $("#correct").click(correct)
+                    }else{
+                        var text=getData["msg"]
+                        $("#success").html(text)
+                    }
+                    console.log(getData)
+            })
+        }
+     } )
+    }
+    function correct(){
+         location.href="/server/positionList/"
+    }
+</script>
+{% endblock %}

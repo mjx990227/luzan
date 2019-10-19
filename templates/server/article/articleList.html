@@ -1,0 +1,249 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+    <div class="row">
+        <div class="col-xs-12">
+            <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+                <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a href="#">文章管理</a></li>
+                <li>文章列表</li>
+            </ol>
+        </div>
+
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-xs-2">
+              <button class="btn btn-primary" style="margin-left: 30px" id="addArticle">添加文章</button>
+         </div>
+        <div class="col-xs-3">
+              <div class="form-group">
+                <label class="sr-only" for="exampleInputAmount"></label>
+                <div class="input-group">
+                  <div class="input-group-addon">栏目</div>
+
+                  <select class="form-control" style="width: 90%" name="catId" id="catId">
+                      <option value="-1">全部分类</option>
+                      {% for item in menuList %}
+                        <option {% if  item.id  ==  catId  %} selected {% endif %} value="{{ item.id }}">{{ item.name }}</option>
+                          {% endfor %}
+                  </select>
+
+                </div>
+              </div>
+         </div>
+        <div class="col-xs-7">
+            <div>
+                <div class="input-group" style="width: 40%">
+                      <input type="text" class="form-control" id="keyTitle" name="keyTitle" value="{{ keyTitle }}" >
+                      <span class="input-group-btn">
+                          <button class="btn btn-primary" type="button" id="search"><span class="glyphicon glyphicon-search"></span></button>
+                      </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <form action="/server/addPosition/" method="POST" id="form">
+        {% csrf_token %}
+            <div class="row"  style="margin: 25px 0 0 30px">
+                <table class="table table-bordered">
+                  <tr>
+                      <th class="text-center"><input type="checkbox" name="checkall" value="all" id="all"></th>
+                      <th class="text-center">排序</th>
+                      <th class="text-center">id</th>
+                      <th class="text-center">标题</th>
+                      <th class="text-center">栏目</th>
+                      <th class="text-center">封面图</th>
+                      <th class="text-center">状态</th>
+                      <th class="text-center">点击量</th>
+                      <th class="text-center">操作</th>
+                  </tr>
+                    {% for item in articleList %}
+                      <tr class="single">
+                         <td class="text-center"><input type="checkbox"  value="{{ item.id }}" name="choose" id="choose"></td>
+                           <td class="text-center">0</td>
+                         <td id="id" class="text-center">{{ item.id }}</td>
+                         <td class="text-center">{{ item.title }}</td>
+                         <td class="text-center">{{ item.catname }}</td>
+                         <td class="heading text-center">
+                             {% if item.thumb %}
+                                <img  style="width: 50px; heigth:50px"src="/static/uploads/img/{{ item.thumb }}" class="img"/>
+                             {% else %}
+                                <img src="/static/img/timg1.jpg" style="width: 50px; heigth:50px" alt="">
+                             {% endif %}
+                         </td>
+                          <td class="text-center">显示</td>
+                          <td class="text-center">{{ item.num }}</td>
+                         <td class="text-center">
+                             <button class="btn btn-default glyphicon glyphicon-edit btn-primary edit" index="{{ item.id }}"></button>
+                             <button class="btn btn-default glyphicon glyphicon-trash btn-danger delete" index="{{ item.id }}"></button>
+                         </td>
+                      </tr>
+                        {% empty %}
+                        <tr>
+                        <td>没有查到相关信息</td>
+                        </tr>
+                  {% endfor %}
+                </table>
+            </div>
+
+        <div class="row form-inline" style="margin-left:30px">
+              <div class="form-group">
+                <select class="form-control" style="width: 120px" name="positionId" id="positionId">
+                      {% for item in positionList %}
+                        <option value="{{ item.id }}">{{ item.name }}</option>
+                          {% endfor %}
+                  </select>
+              </div>
+              <button class="btn btn-primary" type="submit" id="push"><span class="glyphicon glyphicon-arrow-up"></span></button>
+        </div>
+    </form>
+
+
+    <div class="row" style="margin-left: 40%">
+        <nav aria-label="Page navigation">
+			  <ul class="pagination">
+			  {% if page != 1 %}
+				<li>
+				  <a href="/server/articleList?page={{ page |add:-1 }}&catId={{ catId }}&keyTitle={{ keyTitle }}" aria-label="Previous">
+
+					<span aria-hidden="true">«</span>
+
+				  </a>
+				</li>
+			  {% endif %}
+				  {% for item in allPageList %}
+					  <li{% if page == item %} class="active"{% endif %}><a href="/server/articleList?page={{ item }}&catId={{ catId }}&keyTitle={{ keyTitle }}">{{ item }}</a></li>
+				  {% endfor %}
+{#				{% if page != allPageList|length %}#}
+{#				<li>#}
+{#				  <a href="/server/articleList?page={{ page |add:1 }}&catId={{ catId }}&keyTitle={{ keyTitle }}" aria-label="Next">#}
+{#					<span aria-hidden="true">»</span>#}
+{#				  </a>#}
+{#				</li>#}
+{#			  {% endif %}#}
+              	{% if page < pages %}
+				<li>
+				  <a href="/server/articleList?page={{ page |add:1 }}&catId={{ catId }}&keyTitle={{ keyTitle }}" aria-label="Next">
+					<span aria-hidden="true">»</span>
+				  </a>
+				</li>
+			  {% endif %}
+			  </ul>
+        </nav>
+    </div>
+        {#模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="success"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <script>
+        var checkArr=[]
+    {#全选函数#}
+        var checkall=$("#all")
+        checkall.click(function(){
+            console.log($(this).prop("checked"))
+            if ($(this).prop("checked")){
+                $("[name='choose']").attr("checked",true)
+                console.log(checkArr)
+                console.log("点击了全选")
+             }else{
+                 $("[name='choose']").attr("checked",false)
+            }
+        })
+    {#单选函数#}
+        var single=$("[name='choose']")
+        single.click(function(){
+            if ($(this).prop("checked")){
+                singleId=$(this).val()
+                checkArr.push($(this).val())
+                console.log("完整的checkArr"+checkArr)
+             }
+        })
+
+        var success=$("#success")
+        var aid
+        var editBtn=$(".edit")
+        var deleteBtn=$(".delete")
+        var searchBtn=$("#search")
+        var pushBtn=$("#push")
+        init()
+        function init(){
+            editBtn.click(edit)
+            deleteBtn.click(_delete)
+            searchBtn.click(search)
+            pushBtn.click(_push)
+            $("#addArticle").click(add)
+            var validate=$("#form").validate({
+            submitHandler:function(form){
+                $("#form").ajaxSubmit(function(message){
+                    var getData=JSON.parse(message)
+                        if(getData["code"]==0){
+                            var text=getData["msg"]
+                            $('#myModal').modal('show')
+                            $("#success").html(text)
+
+                        }else{
+                            var text=getData["msg"]
+                            $('#myModal').modal('show')
+                            $("#success").html(text)
+                        }
+                        console.log(getData)
+                })
+            }
+        })
+        }
+        function add(){
+                location.href="/server/addArticle/"
+        }
+        function edit(){
+            aid=this.getAttribute("index")
+            console.log(aid)
+            location.href="/server/editArticle?id="+aid
+        }
+        function _delete(){
+            aid=this.getAttribute("index")
+            $('#myModal').modal('show')
+            $("#success").html("确认删除？")
+            $("#correct").click(correct)
+            console.log(aid)
+        }
+        function correct(){
+            $.ajax({
+                url:"/server/deleteArticle/",
+                type:"get",
+                data:{
+                    aid:aid
+                },
+                dataType:"json",
+                success:function(data){
+                    console.log(data["msg"])
+                    $("#success").html(data["msg"])
+                    location.href="/server/articleList?page=1"
+                }
+            })
+        }
+    function search(){
+        var catId=$("#catId").val()
+        var keyTitle=$("#keyTitle").val()
+        location.href="/server/articleList?page=1"+"&catId="+catId+"&keyTitle="+keyTitle
+    }
+    function _push(){
+        var positionId=$("#positionId").val()
+        {#location.href="/server/addPosition?articleId="+articleId+"&positionId="+positionId#}
+
+    }
+    </script>
+{% endblock %}
+

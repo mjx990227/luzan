@@ -1,0 +1,162 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+<div class="row">
+    <div class="col-xs-12">
+         <ol class="breadcrumb" style="margin: 25px 0 0 30px">
+             <li><span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a href="#">用户管理</a></li>
+             <li>添加用户</li>
+        </ol>
+    </div>
+    </div>
+    <div class="row container" style="margin: 35px 0 0 10%">
+        <form class="form-horizontal" action="/server/editUserHandler/" enctype="multipart/form-data" method="POST" id="userform">
+        {% csrf_token %}
+          {% for item in userList %}
+              <div class="form-group" style="display:none">
+            <label for="inputEmail3" class="col-sm-2 control-label">id</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="userid" value="{{ uid }}" name="uid">
+                <div class="error"></div>
+            </div>
+          </div>
+              <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="username" value="{{ item.username }}" name="username">
+                <div class="error"></div>
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="password" value="{{ item.password }}" name="password">
+                <div class="error"></div>
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">电子邮件</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="email" value="{{ item.email }}" name="email">
+                <div class="error"></div>
+            </div>
+          </div>
+            <div class="form-group" id="head">
+            <label for="inputPassword3" class="col-sm-2 control-label">头像</label>
+            <div class="col-sm-10"  id="headimg">
+              {% if item.thumb %}
+                <input type="hidden" id="file" value="{{ item.thumb }}" name="preImg" style="opacity: 0;width: 70px;height: 70px ;border:1px solid black">
+                    <img src="/static/uploads/img/{{ item.thumb }}" class="preview" style="position: absolute;width: 70px;height: 70px">
+                    {% else %}
+                    <img src="/static/img/timg.jpg" class="preview" style="position: absolute;width: 70px;height: 70px">
+                {% endif %}
+                <input type="file" id="file" placeholder="选择文件" name="headimg" style="opacity: 0;width: 70px;height: 70px ;border:1px solid black">
+            </div>
+          </div>
+            <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">用户简介</label>
+            <div class="col-sm-10">
+                {{ form.media }}
+                {{ form }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">提交</button>
+              <button type="reset" class="btn btn-default">重填</button>
+            </div>
+          </div>
+            {% endfor %}
+        </form>
+{#模态框#}
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p id="success"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="correct">确认</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <script>
+     init()
+    function init(){
+         document.getElementById("id_content").value='{{ userInfo |safe }}'
+        var validate=$("#userform").validate({
+            rules:{
+							username:{
+								required:true,
+								minlength:2,
+								maxlength:10
+							},
+							email:{
+								required:true,
+								email:true
+							}
+						},
+						messages:{
+							username:{
+								required:"用户名不符合要求",
+								minlength:"最小长度为2",
+								maxlength:"最大长度为10"
+							},
+							email:{
+								required:"邮箱填写不符合要求",
+								email:"邮箱填写不符合要求"
+							}
+						},
+					errorPlacement:function(error,element) {
+						error.appendTo(element.parent().find(".error"));
+}
+,
+        submitHandler:function(form){
+            $("#userform").ajaxSubmit(function(message){
+                var getData=JSON.parse(message)
+                {#var getData=message#}
+                console.log(typeof(message))
+                    if(getData["code"]==0){
+                        var text=getData["msg"]
+                        console.log(text)
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                        $("#correct").click(correct)
+                     }else{
+                        var text=getData["msg"]
+                        console.log(text)
+                        $('#myModal').modal('show')
+                        $("#success").html(text)
+                     }
+            })
+        }
+     } )
+        $("input[name='headimg']").change(function(){
+            road=$("#file").val().split(".")[$("#file").val().split(".").length-1]
+            console.log(road)
+            list=["jpg","jpeg","png"]
+            console.log(list.indexOf(road))
+            if(list.indexOf(road) != -1){
+                    console.log("是图片文件")
+                    var imgFile=this.files.item(0);
+                    var _url=window.URL.createObjectURL(imgFile);
+                    $(".preview").attr("src",_url);
+                    return
+            }
+            $('#myModal').modal('show')
+            $("#success").html("不是图片文件")
+            $(".preview").attr("src","/static/img/timg1.jpg");
+        })
+
+    }
+    function correct(){
+         location.href="/server/userList/"
+    }
+</script>
+    </div>
+{% endblock %}

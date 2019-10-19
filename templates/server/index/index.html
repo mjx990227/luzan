@@ -1,0 +1,91 @@
+{% extends "server/common/nav.html" %}
+{% block right %}
+ <div style="margin:20px;">
+      <div>
+          <h1 style="display:inline-block">欢迎使用</h1><h4 style="display:inline-block;color:#ABABAA">路赞后台管理系统</h4>
+          <hr>
+      </div>
+      <div style="background-color: #F5F5F5;padding-top: 10px;padding-left: 15px">
+          <span class="glyphicon glyphicon-tag" aria-hidden="true" style="display: inline-block"></span>
+          <p style="color:#789DD1;display: inline-block">平台整理指标</p>
+      </div>
+      <div style="margin-top:10px">
+          <div class="col-md-6" >
+              <div class="panel panel-default">
+                  <div class="panel-heading"  style="background-color: #6EA5DD;height:70px;padding: 10px">
+                    <h1 class="glyphicon glyphicon-cloud white" aria-hidden="true" style="display:inline-block"></h1>
+                    <div style="display:inline-block;right: 40px;position:absolute;" class="text-center">
+                        <h5 class="white">今日登陆用户数</h5>
+                        <h5 class="white">250</h5>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="col-md-6 text-left">
+                        <h5 style="color:#6EA5DD">查看</h5>
+                    </div>
+                      <div class="col-md-6 text-right">
+                        <h5 style="color:#6EA5DD" class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></h5>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <div class="col-md-6" >
+              <div class="panel panel-default">
+                  <div class="panel-heading"  style="background-color: #5BBA5B;height:70px;padding: 10px">
+                    <h1 class="glyphicon glyphicon-th-list white" aria-hidden="true" style="display:inline-block"></h1>
+                    <div style="display:inline-block;right: 40px;position:absolute;" class="text-center">
+                        <h5 class="white">文章数量</h5>
+                        <h5 class="white">{{ count }}</h5>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="col-md-6 text-left">
+                        <h5 style="color:#5BBA5B"><a href="/server/articleList?page=1">查看</a></h5>
+                    </div>
+                      <div class="col-md-6 text-right">
+                        <h5 style="color:#5BBA5B" class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></h5>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <div class="col-md-6" >
+              <div class="panel panel-default">
+                  <div class="panel-heading"  style="background-color: #F7AE4B;height:70px;padding: 10px">
+                    <h1 class="glyphicon glyphicon-stats white" aria-hidden="true" style="display:inline-block"></h1>
+                    <div style="display:inline-block;right: 40px;position:absolute;" class="text-center">
+                        <h5 class="white">文章最大阅读数</h5>
+                        <h5 class="white">{{ readMax }}</h5>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="col-md-6 text-left">
+                        <h5 style="color:#F7AE4B">查看</h5>
+                    </div>
+                      <div class="col-md-6 text-right">
+                        <h5 style="color:#F7AE4B" class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></h5>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <div class="col-md-6" >
+              <div class="panel panel-default">
+                  <div class="panel-heading"  style="background-color: #DE524B;height:70px;padding: 10px">
+                    <h1 class="glyphicon glyphicon-glass white" aria-hidden="true" style="display:inline-block"></h1>
+                    <div style="display:inline-block;right: 40px;position:absolute;" class="text-center">
+                        <h5 class="white">推荐位数</h5>
+                        <h5 class="white">{{ position }}</h5>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <div class="col-md-6 text-left">
+                        <h5 style="color:#DE524B"><a href="/server/position/">查看</a></h5>
+                    </div>
+                      <div class="col-md-6 text-right">
+                        <h5 style="color:#DE524B" class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></h5>
+                    </div>
+                  </div>
+                </div>
+          </div>
+      </div>
+  </div>
+ {% endblock %}
